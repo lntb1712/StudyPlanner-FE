@@ -27,11 +27,11 @@ const handleLogin = async () => {
       router.push({ name: 'Home' });
     } else {
       // If authentication fails without error, set a default message
-      errorMessage.value = authStore.error || 'Đăng nhập thất bại. Vui lòng thử lại.';
+      errorMessage.value = authStore.error || 'Đăng nhập thất bại. Vui lòng thử lại!';
     }
   } catch (error) {
     console.error('Login error:', error);
-    errorMessage.value = 'Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.';
+    errorMessage.value = 'Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại!';
     // If error is from undefined property, this catch will handle it
   }
 };
