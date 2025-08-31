@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteRecordRaw, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router';
+import { createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router';
 import Login from '../pages/LoginView.vue';
 import Home from '../pages/HomeView.vue';
 import { useAuthStore } from '../../application/stores/AuthStore';
@@ -15,7 +15,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+router.beforeEach((to, _from, next) => {
   const auth = useAuthStore();
 
   // Sử dụng auth.isAuthenticated() thay vì auth.isAuthenticated
