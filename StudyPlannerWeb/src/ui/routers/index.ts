@@ -51,9 +51,10 @@ router.beforeEach((to, _from, next) => {
 const DEFAULT_TITLE = 'Study Planner 🎓' // Tên phần mềm của bạn
 
 // Sau khi mỗi lần chuyển route → đổi title
-router.afterEach((to) => {
+router.afterEach(() => {
   document.title = DEFAULT_TITLE
 })
+
 
 
 export default router
