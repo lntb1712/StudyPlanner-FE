@@ -1,19 +1,19 @@
 export class LoginResponseDTO {
-    token: string;
-    username: string;
-    groupId: number;
+  token: string;
+  username: string;
+  groupId: string; // hoặc number nếu server trả number
 
-    constructor({ Token, Username, GroupId }: { Token: string; Username: string; GroupId: number }) {
-        this.token = Token;
-        this.username = Username;
-        this.groupId = GroupId;
-    }
+  constructor({ token, username, groupId }: { token: string; username: string; groupId: string }) {
+    this.token = token;
+    this.username = username;
+    this.groupId = groupId;
+  }
 
-    static fromJson(json: { Token: string; Username: string; GroupId: number }) {
-        return new LoginResponseDTO({
-            Token: json.Token,
-            Username: json.Username,
-            GroupId: json.GroupId
-        })
-    }
+  static fromJson(json:any): LoginResponseDTO {
+    return new LoginResponseDTO({
+      token: json.Token,
+      username: json.Username,
+      groupId: json.GroupId
+    });
+  }
 }

@@ -10,7 +10,7 @@ export class LoginRepository implements ILoginRepository {
       const response = await http.post("/Login/Authentication", loginRequestDTO);
 
       // Map JSON -> ApiResponse object
-      const apiResponse = ApiResponse.fromJson(response);
+      const apiResponse = ApiResponse.fromJson<LoginResponseDTO>(response);
 
       if (!apiResponse.isSuccess()) {
         throw new Error(apiResponse.message || "Đăng nhập thất bại");
