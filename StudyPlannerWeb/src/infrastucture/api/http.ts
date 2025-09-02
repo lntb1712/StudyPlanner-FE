@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const http = axios.create({
-  baseURL: "https://651c037c29cb.ngrok-free.app/api", // <-- đổi từ import.meta.env
+  baseURL: "https://05488238ca62.ngrok-free.app/api", // <-- đổi từ import.meta.env
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
