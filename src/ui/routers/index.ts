@@ -1,33 +1,60 @@
-import { createRouter, createWebHistory, type RouteRecordRaw} from 'vue-router';
-import Login from '../pages/LoginView.vue';
-import Home from '../pages/HomeView.vue';
-import { useAuthStore } from '../../application/stores/AuthStore';
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
+import Login from '../pages/LoginView.vue'
+import Home from '../pages/HomeView.vue'
+import AccountManagement from '../pages/AccountManagementView.vue'
+import { useAuthStore } from '../../application/stores/AuthStore'
 
+// Khai báo routes với meta title
 const routes: RouteRecordRaw[] = [
   { path: '/', redirect: '/login' },
-  { path: '/login', name: 'Login', component: Login },
-  { path: '/home', name: 'Home', component: Home, meta: { requiresAuth: true } },
+  { path: '/login', name: 'Login', component: Login, meta: { title: 'Đăng nhập' } },
+  {
+    path: '/home',
+    name: 'Home',
+    component: Home,
+    meta: { requiresAuth: true, title: 'Trang chủ' },
+    children: [
+      {
+        path: 'account-management',
+        name: 'AccountManagement',
+        component: AccountManagement,
+        meta: { requiresAuth: true, title: 'Quản lý tài khoản' },
+      },
+    ],
+  },
   { path: '/:pathMatch(.*)*', redirect: '/login' },
-];
+]
 
+// Tạo router
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
+})
 
+// Navigation Guard
 router.beforeEach((to, _from, next) => {
-  const auth = useAuthStore();
+  const authStore = useAuthStore()
 
-  // Sử dụng auth.isAuthenticated() thay vì auth.isAuthenticated
-  if (to.meta.requiresAuth && !auth.isAuthenticated()) {
-    return next({ name: 'Login' });
+  // Nếu route cần đăng nhập nhưng chưa login
+  if (to.meta.requiresAuth && !authStore.isAuthenticated()) {
+    return next({ name: 'Login' })
   }
 
-  if (to.name === 'Login' && auth.isAuthenticated()) {
-    return next({ name: 'Home' });
+  // Nếu đã login mà vẫn cố vào trang login → redirect về home
+  if (to.name === 'Login' && authStore.isAuthenticated()) {
+    return next({ name: 'Home' })
   }
 
-  next();
-});
+  return next()
+})
 
-export default router;
+const DEFAULT_TITLE = 'Study Planner 🎓' // Tên phần mềm của bạn
+
+// Sau khi mỗi lần chuyển route → đổi title
+router.afterEach(() => {
+  document.title = DEFAULT_TITLE
+})
+
+
+
+export default router
