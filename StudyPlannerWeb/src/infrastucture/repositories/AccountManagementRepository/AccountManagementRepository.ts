@@ -11,6 +11,9 @@ export class AccountManagementRepository implements IAccountManagementRepository
   pageSize: number = 10
 ): Promise<PagedResponse<AccountManagementResponseDTO>> {
   try {
+    
+    const token = localStorage.getItem('token');
+    http.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     const response = await http.get(`/AccountManagement/GetAllAccount?page=${page}&pageSize=${pageSize}`);
     const apiResponse = ApiResponse.fromJson<PagedResponse<AccountManagementResponseDTO>>(response);
 
