@@ -1,24 +1,18 @@
 import axios from "axios";
 
 export const http = axios.create({
-  baseURL: "https://localhost:7247/api", // <-- đổi từ import.meta.env
-  timeout: 10000,
+  baseURL: "https://studyplannerapi.onrender.com/api", // <-- bạn có thể đổi thành import.meta.env.VITE_API_URL
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// interceptor request
+// ✅ Interceptor response: luôn trả về response.data, nếu lỗi thì trả về Error(message)
 http.interceptors.response.use(
-  (response: any) => response, // trả về toàn bộ response
-  (error: any) => Promise.reject(error)
-);
-
-
-// interceptor response
-http.interceptors.response.use(
-  (response: any) => response.data,
-  (error: any) => {
+  (response) => {
+    return response.data; // luôn lấy data
+  },
+  (error) => {
     const msg =
       error?.response?.data?.Message ||
       error?.response?.data?.message ||

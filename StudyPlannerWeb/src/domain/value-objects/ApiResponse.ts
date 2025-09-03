@@ -1,35 +1,49 @@
+/**
+ * A generic class to represent an API response with success status, message, and data.
+ */
 export class ApiResponse<T> {
   success: boolean;
   message: string;
-  data: T ;
+  data: T | null;
 
-  constructor({ success, message, data }: { success: boolean; message: string; data: T  }) {
+  /**
+   * Constructs an ApiResponse instance.
+   */
+  constructor({ success, message, data }: { success: boolean; message: string; data: T | null }) {
     this.success = success;
     this.message = message;
     this.data = data;
   }
 
-  // Chuyển JSON sang ApiResponse
-  static fromJson<T>(json: any): ApiResponse<T> {
-    if (!json) {
-      throw new Error("ApiResponse.fromJson: json is undefined/null");
-    }
-
+  /**
+   * Creates an ApiResponse from a JSON object.
+   */
+  static fromJson<T>(json: Record<string, any>): ApiResponse<T> {
     return new ApiResponse<T>({
-      success: json.Success ?? json.success ?? false,
-      message: json.Message ?? json.message ?? "",
-      data: json.Data ?? json.data ?? null,
+      success: json.success ?? json.Success ?? false,
+      message: json.message ?? json.Message ?? "",
+      data: (json.data ?? json.Data ?? null) as T | null,
     });
   }
 
-  // Kiểm tra thành công
+  /**
+   * Checks if the API response indicates success.
+   */
   isSuccess(): boolean {
     return this.success === true;
   }
 
-  // Factory method: thành công với dữ liệu
-  static success<T>(data: T, message: string = "Thành công"): ApiResponse<T> {
+  /**
+   * Factory method to create a successful ApiResponse.
+   */
+  static success<T>(data: T, message = "Thành công"): ApiResponse<T> {
     return new ApiResponse<T>({ success: true, message, data });
   }
 
+  /**
+   * Factory method to create a failed ApiResponse.
+   */
+  static error<T>(message = "Thất bại", data: T | null = null): ApiResponse<T> {
+    return new ApiResponse<T>({ success: false, message, data });
+  }
 }

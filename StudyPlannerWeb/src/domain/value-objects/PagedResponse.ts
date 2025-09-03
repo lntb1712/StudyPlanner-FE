@@ -5,26 +5,25 @@ export class PagedResponse<T> {
   totalItems: number;
   pageSize: number;
 
-  constructor() {
-    this.data = [];
-    this.currentPage = 0;
-    this.totalPages = 0;
-    this.totalItems = 0;
-    this.pageSize = 0;
+  constructor(data: T[] = [], currentPage: number = 1, totalPages: number = 1, totalItems: number = 0, pageSize: number = 0) {
+    this.data = data;
+    this.currentPage = currentPage;
+    this.totalPages = totalPages;
+    this.totalItems = totalItems;
+    this.pageSize = pageSize;
   }
 
-  // Map JSON từ API sang PagedResponse
-  static fromJson<U>(json: any, itemMapper: (item: any) => U): PagedResponse<U> {
+  static fromJson<U>(json: Record<string, any>, itemMapper: (item: any) => U): PagedResponse<U> {
     const response = new PagedResponse<U>();
 
-    // Hỗ trợ cả camelCase và PascalCase
+    // Handle both camelCase and PascalCase for JSON keys
     const dataArray = json.Data ?? json.data ?? [];
     response.data = Array.isArray(dataArray) ? dataArray.map(itemMapper) : [];
-
-    response.currentPage = json.CurrentPage ?? json.currentPage ?? 1;
-    response.totalPages = json.TotalPages ?? json.totalPages ?? 1;
-    response.totalItems = json.TotalItems ?? json.totalItems ?? 0;
-    response.pageSize = json.PageSize ?? json.pageSize ?? dataArray.length;
+    
+    response.currentPage = Number(json.CurrentPage ?? json.currentPage ?? 1);
+    response.totalPages = Number(json.TotalPages ?? json.totalPages ?? 1);
+    response.totalItems = Number(json.TotalItems ?? json.totalItems ?? 0);
+    response.pageSize = Number(json.PageSize ?? json.pageSize ?? dataArray.length);
 
     return response;
   }
