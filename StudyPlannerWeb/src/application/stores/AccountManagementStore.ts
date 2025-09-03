@@ -3,149 +3,101 @@ import { ref } from "vue";
 import type { AccountManagementResponseDTO } from "../../domain/entities/AccountManagementDTO/AccountManagementResponseDTO";
 import type { AccountManagementRequestDTO } from "../../domain/entities/AccountManagementDTO/AccountManagementRequestDTO";
 import type { PagedResponse } from "../../domain/value-objects/PagedResponse";
-import type { ApiResponse } from "../../domain/value-objects/ApiResponse";
+import { ApiResponse } from "../../domain/value-objects/ApiResponse";
 import { AccountManagementUseCase } from "../usecases/AccountManagementUseCase";
 
 export const useAccountManagementStore = defineStore("accountManagement", () => {
   const accounts = ref<AccountManagementResponseDTO[]>([]);
   const totalAccounts = ref<number>(0);
   const selectedAccount = ref<AccountManagementResponseDTO | null>(null);
-  const isLoading = ref<boolean>(false);
+  const isLoading = ref(false);
   const errorMessage = ref<string | null>(null);
 
   const useCase = new AccountManagementUseCase();
 
-  async function fetchAccounts(page: number = 1, pageSize: number = 10) {
+  // Generic helper to handle API calls with ApiResponse
+  const handleApiCall = async <T>(
+    apiCall: () => Promise<ApiResponse<T>>,
+    onSuccess?: (data: T) => void
+  ) => {
+    isLoading.value = true;
+    errorMessage.value = null;
     try {
-      isLoading.value = true;
-      errorMessage.value = null;
-      const response: ApiResponse<PagedResponse<AccountManagementResponseDTO>> = await useCase.getAllAccounts(page, pageSize);
-      
-      if (response.isSuccess() && response.data) {
-        accounts.value = response.data.Data || [];
-        totalAccounts.value = response.data.TotalItems || 0;
-      } else {
-        errorMessage.value = response.message || "Không thể tải danh sách tài khoản";
-      }
-    } catch (error: any) {
-      errorMessage.value = error.message || "Lỗi không xác định khi tải danh sách tài khoản";
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  async function fetchTotalAccounts() {
-    try {
-      isLoading.value = true;
-      errorMessage.value = null;
-      const response: ApiResponse<number> = await useCase.getTotalAccounts();
-      
+      const response = await apiCall();
       if (response.isSuccess() && response.data !== null) {
-        totalAccounts.value = response.data;
+        onSuccess?.(response.data);
       } else {
-        errorMessage.value = response.message || "Không thể lấy tổng số tài khoản";
+        errorMessage.value = response.message || "An error occurred";
       }
-    } catch (error: any) {
-      errorMessage.value = error.message || "Lỗi không xác định khi lấy tổng số tài khoản";
+    } catch (error: unknown) {
+      errorMessage.value =
+        error instanceof Error ? error.message : "Unknown error";
     } finally {
       isLoading.value = false;
     }
-  }
+  };
 
-  async function fetchUserInformation(username: string) {
-    try {
-      isLoading.value = true;
-      errorMessage.value = null;
-      const response: ApiResponse<AccountManagementResponseDTO> = await useCase.getUserInformation(username);
-      
-      if (response.isSuccess() && response.data) {
-        selectedAccount.value = response.data;
-      } else {
-        errorMessage.value = response.message || "Không thể lấy thông tin người dùng";
-        selectedAccount.value = null;
+  // Fetch all accounts with pagination
+  const fetchAccounts = (page = 1, pageSize = 10) =>
+    handleApiCall<PagedResponse<AccountManagementResponseDTO>>(
+      () => useCase.getAllAccounts(page, pageSize),
+      (data) => {
+        accounts.value = data.data ?? [];
+        totalAccounts.value = data.totalItems ?? 0;
       }
-    } catch (error: any) {
-      errorMessage.value = error.message || "Lỗi không xác định khi lấy thông tin người dùng";
-      selectedAccount.value = null;
-    } finally {
-      isLoading.value = false;
-    }
-  }
+    );
 
-  async function addAccount(account: AccountManagementRequestDTO) {
-    try {
-      isLoading.value = true;
-      errorMessage.value = null;
-      const response: ApiResponse<boolean> = await useCase.addAccount(account);
-      
-      if (response.isSuccess()) {
-        await fetchAccounts(); // Refresh the account list
-      } else {
-        errorMessage.value = response.message || "Thêm tài khoản thất bại";
-      }
-    } catch (error: any) {
-      errorMessage.value = error.message || "Lỗi không xác định khi thêm tài khoản";
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // Fetch total number of accounts
+  const fetchTotalAccounts = () =>
+    handleApiCall<number>(() => useCase.getTotalAccounts(), (data) => {
+      totalAccounts.value = data ?? 0;
+    });
 
-  async function updateAccount(account: AccountManagementRequestDTO) {
-    try {
-      isLoading.value = true;
-      errorMessage.value = null;
-      const response: ApiResponse<boolean> = await useCase.updateAccount(account);
-      
-      if (response.isSuccess()) {
-        await fetchAccounts(); // Refresh the account list
-      } else {
-        errorMessage.value = response.message || "Cập nhật tài khoản thất bại";
+  // Fetch user information by username
+  const fetchUserInformation = (username: string) =>
+    handleApiCall<AccountManagementResponseDTO>(
+      () => useCase.getUserInformation(username),
+      (data) => {
+        selectedAccount.value = data;
       }
-    } catch (error: any) {
-      errorMessage.value = error.message || "Lỗi không xác định khi cập nhật tài khoản";
-    } finally {
-      isLoading.value = false;
-    }
-  }
+    );
 
-  async function deleteAccount(username: string) {
-    try {
-      isLoading.value = true;
-      errorMessage.value = null;
-      const response: ApiResponse<boolean> = await useCase.deleteAccount(username);
-      
-      if (response.isSuccess()) {
-        await fetchAccounts(); // Refresh the account list
-      } else {
-        errorMessage.value = response.message || "Xóa tài khoản thất bại";
-      }
-    } catch (error: any) {
-      errorMessage.value = error.message || "Lỗi không xác định khi xóa tài khoản";
-    } finally {
-      isLoading.value = false;
-    }
-  }
+  // Add a new account
+  const addAccount = (account: AccountManagementRequestDTO) =>
+    handleApiCall<boolean>(() => useCase.addAccount(account), () =>
+      fetchAccounts()
+    );
 
-  async function searchAccounts(textToSearch: string, page: number = 1, pageSize: number = 10) {
-    try {
-      isLoading.value = true;
-      errorMessage.value = null;
-      const response: ApiResponse<PagedResponse<AccountManagementResponseDTO>> = await useCase.searchAccountByText(textToSearch, page, pageSize);
-      
-      if (response.isSuccess() && response.data) {
-        accounts.value = response.data.Data || [];
-        totalAccounts.value = response.data.TotalItems || 0;
-      } else {
-        errorMessage.value = response.message || "Không tìm thấy tài khoản";
-        accounts.value = [];
+  // Update an existing account
+  const updateAccount = (account: AccountManagementRequestDTO) =>
+    handleApiCall<boolean>(() => useCase.updateAccount(account), () =>
+      fetchAccounts()
+    );
+
+  // Delete an account by username
+  const deleteAccount = (username: string) =>
+    handleApiCall<boolean>(() => useCase.deleteAccount(username), () =>
+      fetchAccounts()
+    );
+
+  // Search accounts by text with pagination
+  const searchAccounts = (textToSearch: string, page = 1, pageSize = 10) =>
+    handleApiCall<PagedResponse<AccountManagementResponseDTO>>(
+      () => useCase.searchAccountByText(textToSearch, page, pageSize),
+      (data) => {
+        accounts.value = data.data ?? [];
+        totalAccounts.value = data.totalItems ?? 0;
       }
-    } catch (error: any) {
-      errorMessage.value = error.message || "Lỗi không xác định khi tìm kiếm tài khoản";
-      accounts.value = [];
-    } finally {
-      isLoading.value = false;
-    }
-  }
+    );
+
+  // Reset store state
+  const reset = () => {
+    accounts.value = [];
+    totalAccounts.value = 0;
+    selectedAccount.value = null;
+    errorMessage.value = null;
+    isLoading.value = false;
+  };
 
   return {
     accounts,
@@ -160,5 +112,6 @@ export const useAccountManagementStore = defineStore("accountManagement", () => 
     updateAccount,
     deleteAccount,
     searchAccounts,
+    reset,
   };
 });
