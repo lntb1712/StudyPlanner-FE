@@ -1,7 +1,3 @@
-/**
- * DTO cho thông tin tài khoản trả về từ API.
- * Code dùng camelCase, mapping từ PascalCase JSON sang camelCase.
- */
 export class AccountManagementResponseDTO {
   UserName: string;
   FullName: string;
@@ -37,9 +33,6 @@ export class AccountManagementResponseDTO {
     this.CreatedAt = CreatedAt;
   }
 
-  /**
-   * Mapping từ JSON (API trả PascalCase) sang DTO (camelCase).
-   */
   static fromJson(json: any): AccountManagementResponseDTO {
     return new AccountManagementResponseDTO({
       UserName: json.UserName,
