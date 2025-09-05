@@ -16,37 +16,36 @@ export const useAccountManagementStore = defineStore("accountManagement", () => 
   const useCase = new AccountManagementUseCase();
 
   // Generic helper to handle API calls with ApiResponse
-  const handleApiCall = async <T>(
-    apiCall: () => Promise<ApiResponse<T>>,
-    onSuccess?: (data: T) => void
-  ) => {
-    isLoading.value = true;
-    errorMessage.value = null;
-    try {
-      const response = await apiCall();
-      if (response.isSuccess() && response.data !== null) {
-        onSuccess?.(response.data);
-      } else {
-        errorMessage.value = response.message || "An error occurred";
-      }
-    } catch (error: unknown) {
-      errorMessage.value =
-        error instanceof Error ? error.message : "Unknown error";
-    } finally {
-      isLoading.value = false;
+ const handleApiCall = async <T>(
+  apiCall: () => Promise<ApiResponse<T>>,
+  onSuccess?: (data: T) => void
+) => {
+  isLoading.value = true;
+  errorMessage.value = null;
+  try {
+    const response = await apiCall();
+    if (response.isSuccess() && response.data != null) {
+      onSuccess?.(response.data);
+    } else {
+      errorMessage.value = response.message || "No data returned from the server";
     }
-  };
+  } catch (error: unknown) {
+    errorMessage.value =
+      error instanceof Error ? error.message : "Unknown error";
+  } finally {
+    isLoading.value = false;
+  }
+};
 
   // Fetch all accounts with pagination
   const fetchAccounts = (page = 1, pageSize = 10) =>
-    handleApiCall<PagedResponse<AccountManagementResponseDTO>>(
-      () => useCase.getAllAccounts(page, pageSize),
-      (data) => {
-        accounts.value = data.data ?? [];
-        totalAccounts.value = data.totalItems ?? 0;
-      }
-    );
-
+  handleApiCall<PagedResponse<AccountManagementResponseDTO>>(
+    () => useCase.getAllAccounts(page, pageSize),
+    (data) => {
+      accounts.value = data.data ?? [];
+      totalAccounts.value = data.totalItems ?? 0;
+    }
+  );
   // Fetch total number of accounts
   const fetchTotalAccounts = () =>
     handleApiCall<number>(() => useCase.getTotalAccounts(), (data) => {

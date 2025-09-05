@@ -36,32 +36,31 @@ export class AccountManagementUseCase {
   }
 
   async addAccount(account: AccountManagementRequestDTO): Promise<ApiResponse<boolean>> {
-    try {
-       const success = await this.repository.addAccount(account);
-      return success;
-    } catch (error: unknown) {
-throw new Error(error instanceof Error ? error.message : "Failed to fetch accounts by group ID");   
-    }
+  try {
+    const success = await this.repository.addAccount(account);
+    return success;
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "Failed to add account");
   }
+}
 
-  async updateAccount(account: AccountManagementRequestDTO): Promise<ApiResponse<boolean>> {
-    try {
-      const success = await this.repository.updateAccount(account);
-      return success;
-    
-    } catch (error: unknown) {    
-      throw new Error(error instanceof Error ? error.message : "Failed to fetch accounts by group ID");
-    }
+async updateAccount(account: AccountManagementRequestDTO): Promise<ApiResponse<boolean>> {
+  try {
+    const success = await this.repository.updateAccount(account);
+    return success;
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "Failed to update account");
   }
+}
 
-  async deleteAccount(username: string): Promise<ApiResponse<boolean>> {
-    try {
-      const success = await this.repository.deleteAccount(username);
-      return success;
-    } catch (error: unknown) {
-      throw new Error(error instanceof Error ? error.message : "Failed to fetch accounts by group ID");
-    }
+async deleteAccount(username: string): Promise<ApiResponse<boolean>> {
+  try {
+    const success = await this.repository.deleteAccount(username);
+    return success;
+  } catch (error: unknown) {
+    throw new Error(error instanceof Error ? error.message : "Failed to delete account");
   }
+}
 
   async getAllAccountByGroupId(groupId: string, page: number = 1, pageSize: number = 10): Promise<ApiResponse<PagedResponse<AccountManagementResponseDTO>>> {
     try {

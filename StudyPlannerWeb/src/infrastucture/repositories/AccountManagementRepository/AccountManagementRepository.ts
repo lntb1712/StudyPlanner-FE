@@ -22,7 +22,11 @@ export class AccountManagementRepository implements IAccountManagementRepository
       const res = await http.get("/AccountManagement/GetAllAccount", {
         params: { page, pageSize },
       });
-      return ApiResponse.fromJson<PagedResponse<AccountManagementResponseDTO>>(res);
+      
+    return ApiResponse.fromJson<PagedResponse<AccountManagementResponseDTO>>(
+      res,
+      AccountManagementResponseDTO.fromJson
+    );
     } catch (error: any) {
       console.error("getAllAccounts error:", error);
       return ApiResponse.error(error.message || "Lỗi không xác định");

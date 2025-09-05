@@ -13,18 +13,30 @@ export class PagedResponse<T> {
     this.pageSize = pageSize;
   }
 
-  static fromJson<U>(json: Record<string, any>, itemMapper: (item: any) => U): PagedResponse<U> {
-    const response = new PagedResponse<U>();
+ static fromJson<U>(json: Record<string, any>, itemMapper: (item: any) => U): PagedResponse<U> {
+  const response = new PagedResponse<U>();
 
-    // Handle both camelCase and PascalCase for JSON keys
-    const dataArray = json.Data ?? json.data ?? [];
-    response.data = Array.isArray(dataArray) ? dataArray.map(itemMapper) : [];
-    
-    response.currentPage = Number(json.CurrentPage ?? json.currentPage ?? 1);
-    response.totalPages = Number(json.TotalPages ?? json.totalPages ?? 1);
-    response.totalItems = Number(json.TotalItems ?? json.totalItems ?? 0);
-    response.pageSize = Number(json.PageSize ?? json.pageSize ?? dataArray.length);
+  // Hỗ trợ lớp lồng Data.Data
+  const dataArray =
+    json.Data?.Data ?? // Xử lý lớp lồng
+    json.data?.data ??
+    json.Data ??
+    json.data ??
+    json.items ??
+    json.Items ??
+    json.records ??
+    json.Records ??
+    [];
 
-    return response;
-  }
+  console.log("Data Array:", dataArray); // Log để kiểm tra
+  response.data = Array.isArray(dataArray) ? dataArray.map(itemMapper) : [];
+
+  response.currentPage = Number(json.CurrentPage ?? json.currentPage ?? json.page ?? 1);
+  response.totalPages = Number(json.TotalPages ?? json.totalPages ?? 1);
+  response.totalItems = Number(json.TotalItems ?? json.totalItems ?? json.count ?? 0);
+  response.pageSize = Number(json.PageSize ?? json.pageSize ?? 10);
+
+  return response;
+}
+
 }
