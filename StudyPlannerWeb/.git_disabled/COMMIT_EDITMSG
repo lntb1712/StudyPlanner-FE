@@ -1,0 +1,23 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Your branch is up to date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   index.html
+#	new file:   public/logo-removebg-preview.png
+#	deleted:    public/vite.svg
+#	modified:   src/application/stores/AccountManagementStore.ts
+#	modified:   src/assets/logo.png
+#	modified:   src/assets/main.css
+#	modified:   src/domain/entities/AccountManagementDTO/AccountManagementResponseDTO.ts
+#	modified:   src/domain/value-objects/ApiResponse.ts
+#	modified:   src/domain/value-objects/PagedResponse.ts
+#	modified:   src/infrastucture/api/http.ts
+#	modified:   src/infrastucture/repositories/AccountManagementRepository/AccountManagementRepository.ts
+#	modified:   src/infrastucture/repositories/AccountManagementRepository/IAccountManagementRepository.ts
+#	modified:   src/ui/pages/AccountManagementView.vue
+#	modified:   src/ui/pages/HomeView.vue
+#

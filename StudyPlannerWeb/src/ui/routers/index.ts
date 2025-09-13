@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import Login from '../pages/LoginView.vue'
 import Home from '../pages/HomeView.vue'
 import AccountManagement from '../pages/AccountManagementView.vue'
+import GroupManagement from '../pages/GroupManagementView.vue'
 import { useAuthStore } from '../../application/stores/AuthStore'
 
 // Khai báo routes với meta title
@@ -19,6 +20,12 @@ const routes: RouteRecordRaw[] = [
         name: 'AccountManagement',
         component: AccountManagement,
         meta: { requiresAuth: true, title: 'Quản lý tài khoản' },
+      },
+      {
+        path: 'group-management',
+        name: 'GroupManagement',
+        component: GroupManagement,
+        meta: { requiresAuth: true, title: 'Quản lý nhóm' }, // Thêm route mới
       },
     ],
   },

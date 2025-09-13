@@ -20,21 +20,39 @@ export class ApiResponse<T> {
   /**
    * Creates an ApiResponse from a JSON object.
    */
- static fromJson<T>(json: Record<string, any>, itemMapper?: (item: any) => any): ApiResponse<T> {
-  let data: T | null = null;
-  if (json.data || json.Data) {
-    if (itemMapper) {
-      data = PagedResponse.fromJson(json.data ?? json.Data, itemMapper) as T;
-    } else {
-      data = (json.data ?? json.Data) as T;
+  static fromJson<T>(
+    json: Record<string, any>,
+    itemMapper?: (item: any) => any
+  ): ApiResponse<T> {
+    let data: T | null = null;
+    const rawData = json.data ?? json.Data;
+
+    if (rawData !== undefined && rawData !== null) {
+      // Nếu có cấu trúc phân trang (PagedResponse)
+      if (
+        typeof rawData === "object" &&
+        ("items" in rawData || "Items" in rawData ||
+         "totalItems" in rawData || "TotalItems" in rawData)
+      ) {
+        data = PagedResponse.fromJson(rawData, itemMapper ?? ((x: any) => x)) as T;
+      }
+      // Nếu là mảng []
+      else if (Array.isArray(rawData)) {
+        data = (itemMapper ? rawData.map(itemMapper) : rawData) as unknown as T;
+      }
+      // Nếu là object đơn
+      else {
+        data = (itemMapper ? itemMapper(rawData) : rawData) as T;
+      }
     }
+
+    return new ApiResponse<T>({
+      success: json.success ?? json.Success ?? false,
+      message: json.message ?? json.Message ?? "No message provided",
+      data,
+    });
   }
-  return new ApiResponse<T>({
-    success: json.success ?? json.Success ?? false,
-    message: json.message ?? json.Message ?? "No message provided",
-    data,
-  });
-}
+
   /**
    * Checks if the API response indicates success.
    */

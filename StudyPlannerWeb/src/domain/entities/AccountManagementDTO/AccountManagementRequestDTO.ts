@@ -15,8 +15,4 @@ export class AccountManagementRequestDTO {
         this.GroupId = GroupId;
     }
 
-
-
-
-
 }
