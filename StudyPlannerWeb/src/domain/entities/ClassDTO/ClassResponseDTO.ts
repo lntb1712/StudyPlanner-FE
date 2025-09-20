@@ -11,6 +11,6 @@ export class ClassResponseDTO{
         return new ClassResponseDTO({
             ClassId:json.ClassId,
             ClassName:json.ClassName
-        })
+        });
     }
 }

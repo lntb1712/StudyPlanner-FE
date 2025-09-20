@@ -254,7 +254,7 @@ const startEditStudent = (studentClass: StudentClassRequestDTO) => {
 
 const submitStudentForm = async () => {
   if (!newClass.value.ClassId || !newStudentClass.value.StudentId || newStudentClass.value.StudyStatus === undefined) {
-    alert("Vui lòng chọn đầy đủ thông tin phân công sinh viên");
+    alert("Vui lòng chọn đầy đủ thông tin phân công học sinh");
     return;
   }
   newStudentClass.value.ClassId = newClass.value.ClassId;
@@ -263,11 +263,11 @@ const submitStudentForm = async () => {
   try {
     if (isEditingStudent.value) {
       await studentClassStore.updateStudentClass(newStudentClass.value);
-      showSuccess("Cập nhật phân công sinh viên thành công!");
+      showSuccess("Cập nhật phân công học sinh thành công!");
       console.log('✅ Update success, refetching...'); // Debug success
     } else {
       await studentClassStore.addStudentClass(newStudentClass.value);
-      showSuccess("Thêm phân công sinh viên thành công!");
+      showSuccess("Thêm phân công học sinh thành công!");
     }
     await studentClassStore.fetchStudentClasses(newClass.value.ClassId, 1, 100);
     console.log('🔄 Refetched studentClasses:', studentClassStore.studentClasses); // Debug: Data sau refetch
@@ -408,15 +408,15 @@ const handleDeleteClass = async (classId: string) => {
       <!-- Student Classes Table -->
       <div v-else-if="selectedTab === 'studentClasses'">
         <div v-if="!selectedClassId" class="p-4 text-center text-gray-500 text-sm">
-          Vui lòng chọn một lớp học từ tab "Lớp học" để xem phân công sinh viên.
+          Vui lòng chọn một lớp học từ tab "Lớp học" để xem phân công học sinh.
         </div>
         <div v-else class="overflow-x-auto">
           <table class="w-full min-w-[600px] text-left text-sm text-gray-600 table-auto border border-gray-300">
             <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-medium sticky top-0">
               <tr>
                 <th class="px-4 py-2 border-b">Mã lớp</th>
-                <th class="px-4 py-2 border-b">Mã sinh viên</th>
-                <th class="px-4 py-2 border-b">Tên sinh viên</th>
+                <th class="px-4 py-2 border-b">Mã học sinh</th>
+                <th class="px-4 py-2 border-b">Tên học sinh</th>
                 <th class="px-4 py-2 border-b">Trạng thái học</th>
                 <th class="px-4 py-2 border-b text-center">Hành động</th>
               </tr>
@@ -526,7 +526,7 @@ const handleDeleteClass = async (classId: string) => {
             'px-4 py-2 rounded-full text-sm font-medium',
             selectedSubTab === 'students' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
           ]">
-            Phân công sinh viên
+            Phân công học sinh
           </button>
           <button @click="selectedSubTab = 'teachers'" :class="[
             'px-4 py-2 rounded-full text-sm font-medium',
@@ -566,14 +566,14 @@ const handleDeleteClass = async (classId: string) => {
         <div v-if="selectedSubTab === 'students'" class="space-y-4">
           <!-- Form to add/edit student -->
           <div class="border rounded-lg p-3 bg-gray-50">
-            <h5 class="font-medium mb-2">{{ isEditingStudent ? 'Sửa' : 'Thêm' }} phân công sinh viên</h5>
+            <h5 class="font-medium mb-2">{{ isEditingStudent ? 'Sửa' : 'Thêm' }} phân công học sinh</h5>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
               <!-- Student dropdown -->
               <div>
-                <label class="block text-xs font-medium mb-1">Chọn sinh viên</label>
+                <label class="block text-xs font-medium mb-1">Chọn học sinh</label>
                 <select v-model="selectedStudentAccount" :disabled="isEditingStudent"
                   class="w-full border rounded-lg px-3 py-2 text-sm focus:ring focus:ring-indigo-200 focus:border-indigo-500">
-                  <option :value="null">-- Chọn sinh viên --</option>
+                  <option :value="null">-- Chọn học sinh --</option>
                   <option v-for="account in studentAccounts" :key="account.UserName" :value="account">
                     {{ account.UserName }} - {{ account.FullName }}
                   </option>
@@ -607,8 +607,8 @@ const handleDeleteClass = async (classId: string) => {
             <table class="w-full text-sm text-gray-600">
               <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-medium">
                 <tr>
-                  <th class="px-4 py-2">Mã sinh viên</th>
-                  <th class="px-4 py-2">Tên sinh viên</th>
+                  <th class="px-4 py-2">Mã học sinh</th>
+                  <th class="px-4 py-2">Tên học sinh</th>
                   <th class="px-4 py-2">Trạng thái học</th>
                   <th class="px-4 py-2 text-center">Hành động</th>
                 </tr>
