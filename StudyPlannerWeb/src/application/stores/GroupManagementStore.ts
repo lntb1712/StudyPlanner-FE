@@ -61,16 +61,24 @@ export const useGroupManagementStore = defineStore("groupManagement", () => {
     );
 
   // Fetch group functions
+
   const fetchGroupFunctions = (groupId: string) =>
     handleApiCall<GroupFunctionResponseDTO[]>(
       () => useCase.getGroupFunctionWithGroupID(groupId),
       async (data) => {
         if (data && data.length > 0) {
+          // ✅ Nhóm đã có quyền → hiển thị đúng danh sách
           groupFunctions.value = data;
         } else {
-          // Nếu nhóm chưa có function → load danh sách function để phân quyền
+          // ❌ Nhóm chưa có quyền → load toàn bộ function để gán
           await fetchFunctions();
-          groupFunctions.value = [];
+          groupFunctions.value = functions.value.map((f) => ({
+            FunctionId: f.FunctionId,
+            FunctionName: f.FunctionName,
+            GroupId: groupId,
+            IsEnable: false,
+            IsReadOnly: false,
+          }));
         }
       }
     );

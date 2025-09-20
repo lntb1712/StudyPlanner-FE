@@ -4,6 +4,7 @@ import Home from '../pages/HomeView.vue'
 import AccountManagement from '../pages/AccountManagementView.vue'
 import GroupManagement from '../pages/GroupManagementView.vue'
 import { useAuthStore } from '../../application/stores/AuthStore'
+import ClassManagement from '../pages/ClassManagementView.vue'
 
 // Khai báo routes với meta title
 const routes: RouteRecordRaw[] = [
@@ -26,6 +27,12 @@ const routes: RouteRecordRaw[] = [
         name: 'GroupManagement',
         component: GroupManagement,
         meta: { requiresAuth: true, title: 'Quản lý nhóm' }, // Thêm route mới
+      },
+       {
+        path: 'class-management',
+        name: 'ClassManagement',
+        component: ClassManagement,
+        meta: { requiresAuth: true, title: 'Quản lý lớp học' }, // Added ClassManagement route
       },
     ],
   },

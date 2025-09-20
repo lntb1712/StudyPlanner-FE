@@ -56,7 +56,7 @@ export const useAuthStore = defineStore("auth", () => {
   const role = ref<string | null>(null);
   const permissions = ref<{ id: string; ro: boolean }[]>([]);
   const exp = ref<number>(0);
- const userInfo = ref<AccountManagementResponseDTO | null>(null);
+  const userInfo = ref<AccountManagementResponseDTO | null>(null);
   const error = ref<string | null>(null);
   const loading = ref<boolean>(false);
 
@@ -87,7 +87,7 @@ export const useAuthStore = defineStore("auth", () => {
       // lưu localStorage
       localStorage.setItem("token", response.token);
       localStorage.setItem("username", usernameInput);
-      
+
       await fetchUserInfo();
     } catch (err: unknown) {
       error.value = err instanceof Error ? err.message : "Lỗi không xác định";

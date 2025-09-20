@@ -68,23 +68,31 @@ export class GroupManagementRepository implements IGroupManagementRepository {
   }
 
   async getGroupFunctionWithGroupID(groupId: string): Promise<ApiResponse<GroupFunctionResponseDTO[]>> {
-    try {
-      this.setAuthorizationHeader();
-      const res = await http.get("/GroupManagement/GetGroupFunctionWithGroupID", { params: { groupId } });
-      return ApiResponse.fromJson<GroupFunctionResponseDTO[]>(res, (json: any) => {
-          if (json && Array.isArray(json.data)) {
-            return {
-              ...json,
-              data: json.data.map(GroupFunctionResponseDTO.fromJson)
-            };
-          }
-          return json;
-        });
-    } catch (error: any) {
-      console.error("getGroupFunctionWithGroupID error:", error);
-      return ApiResponse.error(error.message || "Lỗi không xác định");
-    }
+  try {
+    this.setAuthorizationHeader();
+
+    // Call API with groupId as query param
+    const res = await http.get("/GroupManagement/GetGroupFunctionWithGroupID", { 
+      params: { groupId } 
+    });
+
+    // Parse response into ApiResponse<GroupFunctionResponseDTO[]>
+    return ApiResponse.fromJson<GroupFunctionResponseDTO[]>(res, (json: any) => {
+      if (json && Array.isArray(json.data)) {
+        return {
+          ...json,
+          data: json.data.map(GroupFunctionResponseDTO.fromJson) // map each raw item → DTO
+        };
+      }
+      return json;
+    });
+
+  } catch (error: any) {
+    console.error("getGroupFunctionWithGroupID error:", error);
+    return ApiResponse.error(error.message || "Lỗi không xác định");
   }
+}
+
 
   async deleteGroupManagement(groupId: string): Promise<ApiResponse<boolean>> {
     try {
