@@ -98,7 +98,7 @@ const handleEdit = (account: any) => {
     FullName: account.FullName,
     Email: account.Email,
     ParentEmail: account.ParentEmail,
-    Password: "",
+    Password: account.Password,
     GroupId: account.GroupId || (groups.value[0]?.GroupId ?? "USER"),
   };
   isModalOpen.value = true;
