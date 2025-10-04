@@ -2,12 +2,12 @@
 import { useAuthStore } from "../../application/stores/AuthStore";
 import { useRouter, useRoute } from "vue-router";
 import { Home, Users, Menu, Shield, BookOpen } from "lucide-vue-next";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 const auth = useAuthStore();
 const router = useRouter();
 const route = useRoute();
-const isSidebarOpen = ref<boolean>(false);
+const isSidebarOpen = ref<boolean>(true);
 
 const handleLogout = () => {
   auth.logout();
@@ -18,11 +18,24 @@ const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
 };
 
-const isActive = (path: string) => route.path.startsWith(path);
+const isActive = (path: string) => {
+  let current = route.path;
+  if (current === '/home') {
+    current = '/home/dashboard';
+  }
+  return current.startsWith(path);
+};
+
+// Redirect to dashboard if on /home
+watch(() => route.path, (newPath) => {
+  if (newPath === '/home') {
+    router.push('/home/dashboard');
+  }
+});
 
 // Config tất cả menu (chưa filter)
 const navItems = [
-  { name: "Dashboard", path: "/home/dashboard", icon: Home },
+  { name: "Tổng quan", path: "/home/dashboard", icon: Home },
   { name: "Quản lý tài khoản", path: "/home/account-management", icon: Users, perm: "ucAccountManagement" },
   { name: "Quản lý vai trò", path: "/home/group-management", icon: Shield, perm: "ucGroupManagement" },
    { name: "Quản lý lớp học", path: "/home/class-management", icon: BookOpen, perm: "ucClassManagement" }, // Added ClassManagement

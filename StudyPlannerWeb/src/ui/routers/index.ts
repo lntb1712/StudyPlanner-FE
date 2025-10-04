@@ -5,6 +5,7 @@ import AccountManagement from '../pages/AccountManagementView.vue'
 import GroupManagement from '../pages/GroupManagementView.vue'
 import { useAuthStore } from '../../application/stores/AuthStore'
 import ClassManagement from '../pages/ClassManagementView.vue'
+import Dashboard from '../pages/DashboardView.vue' // Added import for Dashboard
 
 // Khai báo routes với meta title
 const routes: RouteRecordRaw[] = [
@@ -28,11 +29,17 @@ const routes: RouteRecordRaw[] = [
         component: GroupManagement,
         meta: { requiresAuth: true, title: 'Quản lý nhóm' }, // Thêm route mới
       },
-       {
+      {
         path: 'class-management',
         name: 'ClassManagement',
         component: ClassManagement,
         meta: { requiresAuth: true, title: 'Quản lý lớp học' }, // Added ClassManagement route
+      },
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: Dashboard,
+        meta: { requiresAuth: false, title: 'Dashboard' }, // Added Dashboard route
       },
     ],
   },
@@ -65,10 +72,8 @@ router.beforeEach((to, _from, next) => {
 const DEFAULT_TITLE = 'Study Planner 🎓' // Tên phần mềm của bạn
 
 // Sau khi mỗi lần chuyển route → đổi title
-router.afterEach(() => {
-  document.title = DEFAULT_TITLE
+router.afterEach((to) => {
+  document.title = to.meta.title ? `${to.meta.title} - ${DEFAULT_TITLE}` : DEFAULT_TITLE
 })
-
-
 
 export default router
